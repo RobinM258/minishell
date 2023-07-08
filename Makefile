@@ -1,46 +1,57 @@
-NAME = miniJoker
+NAME = minijoker
+
+LIB = minilib.a
 
 FILES = listener \
 		parser \
-		utils \
 		signals \
-		ft_free \
-		env \
-		utils2 \
+		mini_free \
 		exec \
-		ft_exec \
-		ft_echo \
-		ft_export \
-		ft_split \
-		ft_unset \
-		ft_env
+		mini_exec \
+		mini/mini_echo \
+		mini/mini_env \
+		mini/mini_export \
+		mini/mini_unset \
+		mini/mini_cd \
+		mini/mini_pwd \
+		redirection
 
 SRC = $(foreach f, $(FILES), srcs/$(f).c)
 OBJ = $(SRC:.c=.o)
 
-CFLAGS = -Iheaders -I/Users/romartin/.brew/opt/readline/include/ -g -Werror -Wextra -Wall
+FS = -fsanitize=address -g
 
-GFLAGS += -Iheaders -lreadline -I/Users/romartin/.brew/opt/readline/include/readline/ -L/Users/romartin/.brew/opt/readline/lib -g -Werror -Wextra -Wall
+CFLAGS = -Iheaders -I/Users/romartin/.brew/opt/readline/include/ -Werror -Wextra -Wall
+
+GFLAGS = -Iheaders $(LIB) -lreadline -I/Users/romartin/.brew/opt/readline/include/readline/ -L/Users/romartin/.brew/opt/readline/lib -Werror -Wextra -Wall
 
 all: $(NAME)
 r: re
-	./miniJoker
+	./minijoker
 
-$(NAME): $(OBJ)
-	@printf "\x1b[32mAll objects compiled\x1b[0m\n"
-	@gcc -o $(NAME) srcs/main.c $(OBJ) $(GFLAGS)
-	@printf "\x1b[32mExecutable compiled\x1b[0m\n"
+$(NAME): $(LIB) $(OBJ)
+	@printf "> \x1b[32mAll objects compiled\x1b[0m\n"
+	@gcc -o $(NAME) srcs/main.c $(OBJ) $(GFLAGS) $(FS)
+	@printf "> \x1b[32mExecutable compiled\x1b[0m\n"
 
 .c.o:
-	@gcc $(CFLAGS) -o $@ -c $<
+	@gcc $(CFLAGS) -o $@ -c $< $(FS)
+
+$(LIB):
+	@make -C minilib
+	@cp minilib/minilib.a ./
 
 clean:
+	@make -C minilib clean
+	@printf ">  \x1b[31mAll minilib objects cleaned\x1b[0m\n"
 	@rm -rf $(OBJ)
-	@printf "\x1b[32mAll objects cleaned\x1b[0m\n"
+	@rm -rf miniJoker.dSYM
+	@printf "> \x1b[31mAll objects cleaned\x1b[0m\n"
 
 fclean: clean
-	@rm -rf $(NAME)
-	@printf "\x1b[32mExecutable cleaned\x1b[0m\n"
+	@make -C minilib fclean
+	@rm -rf $(NAME) $(LIB)
+	@printf "> \x1b[31m$(NAME) cleaned\x1b[0m\n"
 
 re: fclean all
 

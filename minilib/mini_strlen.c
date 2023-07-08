@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   mini_strlen.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/19 15:46:01 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/04 12:46:06 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/04 11:03:03 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/07/05 13:16:23 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "miniJoker.h"
+#include "minilib.h"
 
-void	sigint(int code)
+int	mini_strlen(char *str)
 {
-	(void)code;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	return ;
+	int	i;
+
+	i = 0;
+	while (str[i++])
+		;
+	return (i - 1);
 }

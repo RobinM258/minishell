@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   mini_pwd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/19 15:46:01 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/04 12:46:06 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/06 13:59:05 by romartin          #+#    #+#             */
+/*   Updated: 2023/07/08 14:08:06 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniJoker.h"
 
-void	sigint(int code)
+int	mini_pwd(void)
 {
-	(void)code;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	return ;
+	char	args[1024];
+
+	printf("%s\n", getcwd(args, 1024));
+	return (EXIT_SUCCESS);
 }

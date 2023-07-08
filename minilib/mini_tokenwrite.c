@@ -1,23 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   mini_tokenwrite.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/19 15:46:01 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/04 12:46:06 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/07 10:11:45 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/07/08 17:02:58 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "miniJoker.h"
+#include "minilib.h"
+#include <stdio.h>
 
-void	sigint(int code)
+void    mini_tokenwrite(t_token *lst)
 {
-	(void)code;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	return ;
+    while (lst)
+    {
+        if (lst->content)
+            printf("-%s-\n", lst->content);
+        lst = lst->next;
+    }
 }

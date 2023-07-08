@@ -1,5 +1,5 @@
 malloc:
-    - env_copy dans t_miniJoker 
+    - env_copy dans t_minijoker 
     - historique
     - minisplit
     - ft_ministrdup
@@ -9,5 +9,53 @@ echo:
     echo oui "non" => oui non
     echo "oui non" => oui non
     echo oui -n => oui -n
-    echo "oui" -n => ouiminiJoker>
+    echo "oui" -n => ouiminijoker>
     echo oui            non => oui non
+
+parsing:
+    echo oui>test ✔
+    echo oui>|test ✔
+    echo oui|>test ✔
+    echo oui>>|test ✖️
+    echo oui<|test ✖️
+    echo oui>><test ✖️
+
+redirection (simple): redirige la sortie standard
+    echo oui > test => redirige dans test
+    echo oui > test > prout => redirige dans test qui redirige dans prout (donc rien dans test) (ca continue a l infini)
+    grep 2> test => redirige la sortie d erreur dans test
+    grep > test1 2> test => redirige le resultat vers test1 et l erreur vers test
+    grep 2>&1 => redirige l'erreur a la fois dans le fd 2 et fd 1
+    grep 2>&454 => si le fd 454 n'existe pas error fd unvailable
+    grep 2> => error unexpected newline
+    grep 2>& => error unexpected newline
+    grep &2>test => (pas compris ca fait de la merde) => go error et stop
+
+redirection (double): redirige la sortie standard
+    echo oui >> test => ajoute dans test
+    echo oui >> test >> prout = > redirige dans test qui redirige (ajoute a la suite) dans prout (donc rien dans test) (ca continue a l infini)
+    grep 2>> test => ajoute dans test la sortie erreur
+    grep >> test 2>> test2 => ajoute dans test le resultat, ajoute dans test2 la sortie d erreur
+    grep 2>>&1 => unexpected &
+    grep 2>>& => unexpected &
+    grep &>>test => unexpected &
+    grep &2>>test => (pas compris ca fait de la merde) => go error et stop
+
+redirection (input): redirige l entree standard
+    cat < test => utilise le contenu de test dans cat
+
+redirection (HERE DOCUMENTS):
+    cat << DELIMITER TEXTE 
+    TEXTE
+    DELIMITER => ecrit tout ce qu il y a entre les delimiter
+    cat << DELIMITER TEXTE 
+    DELIMITER => ecrit file TEXTE not found
+    (IMPRESSION) ==> cat cherche les fichier de tout ce qu'il y a sur la premiere ligne et prend comme du texte le reste
+
+ECHO oui => ca marche (gerer les maj) (peut etre essayer open ou access ou stat pour tester si le fichier en to_lower existe)
+
+echo oui > test > prout
+
+mini->ffdin = open(test);
+close(mini->ffdin);
+mini->ffdin = open(prout);

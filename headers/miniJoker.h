@@ -1,59 +1,87 @@
-#ifndef MINIJOKER
-# define MINIJOKER
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   miniJoker.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/04 12:22:54 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/07/08 13:56:07 by romartin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <signal.h>
-    #include <unistd.h>
-    #include <readline/readline.h>
-    #include <readline/history.h>
-    #include <sys/time.h>
-    #include <dirent.h>
-    #include <unistd.h>
-    #include <sys/types.h>
-    #include <termios.h>
+#ifndef MINIJOKER_H
+# define MINIJOKER_H
 
-    # ifndef EXIT_SUCESS
-    #  define EXIT_SUCCESS 0
-    # endif
-    # ifndef EXIT_FAILLURE
-    #  define EXIT_FAILLURE 1
-    # endif
-	#ifndef PROMPT
-	# define PROMPT "\n"
-	#endif
+# include <stdio.h>
+# include <signal.h>
+# include <unistd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <sys/time.h>
+# include <dirent.h>
+# include <sys/types.h>
+# include "minilib.h"
+# include <sys/wait.h>
+#include <fcntl.h>
 
-    typedef struct  s_miniJoker {
-        char    **env_copy;
-        char    *sep[7];
-        char    **tokens;
-    } t_miniJoker;
+# ifndef PROMPT
+#  define PROMPT "\x1b[30mmini\x1b[31mJoker\x1b[0m> "
+# endif
 
-    void    listen(t_miniJoker *mini);
-    int     parser(t_miniJoker *mini, char *input);
-	char	*ft_cut_to(char *str, char c);
-	int	    ft_charfind(char *str, char c);
-	size_t	ft_strlen(char *str);
-	int	    ft_strcmp(char *s1, char *s2, int ended);
-    void	sigint(int code);
-    char	*ft_strdup(char *s1);
-    void    exit_miniJoker(t_miniJoker *mini, char *str);
-    char    *getEnv(t_miniJoker *mini, char *str);
-    int	    ft_lrstrcmp(char *s1, char *s2);
-    char    **minisplit(char *str, char **charset);
-    int     true_exec(t_miniJoker *mini, int i);
-    int 	exec_ft(t_miniJoker *mini);
-    void    freetab(char **tab);
-    int     ft_echo(t_miniJoker *mini);
-    int     ft_pwd(void);
-    int     ft_cd(t_miniJoker *mini);
-    char	*ft_strjoin(char *s1, char *s2);
-    int     is_intab(char **tab, char *str);
-    void    exec_loop(char *str, t_miniJoker *mini);
-    int     ft_env(t_miniJoker *mini);
-    int     is_ft_func(t_miniJoker *mini, int i);
-    int     ft_export(t_miniJoker *mini, int index);
-    char	**ft_split(char *str, char c);
-    int     ft_unset(t_miniJoker *mini, int index);
+enum e_errors	{SUCCESS, 	//0
+	ARG_NUMBER, 			//1
+	END, 					//2
+	MALLOC_ERROR,			//3
+	EXEC_FILE,				//4
+	DIR_NOT_FOUND,			//5
+	INPUT_ERROR,			//6
+	QUOTE_ERROR,			//7
+	UNKNOW_COMMAND,			//8
+	UNKNOW_ERROR,			//9
+	FILE_NOT_FOUND,			//10
+	OPEN_ERROR,				//11
+	FORK_ERROR};			//12
+	typedef struct s_minijoker {
+	char **env_copy;
+	char *sep[6];
+	struct s_token	*tokens;
+	int fdin;
+	int	fdout;
+}	t_minijoker;
+
+/* BUILTIN */
+int		mini_env(t_minijoker *mini);
+int		mini_echo(t_minijoker *mini);
+int		mini_pwd(void);
+int		mini_cd(t_minijoker *mini);
+int		mini_export(t_minijoker *mini);
+int		mini_unset(t_minijoker *mini);
+int		mini_pwd(void);
+
+/* Parsing */
+int		parser(t_minijoker *mini, char *input);
+char	str_is_encapsuled(char *str);
+int		tab_is_encapsuled(char **tab);
+int		encapsuled_strlen(char *str);
+int		encap_tablen(char **tab);
+char	*simpledup_without_quote(char *str);
+int		size_encapsuled(char **tab, int *i, char quote);
+char	*copy_until_encapsuled(char **tab, int *i, int *kr, char quote);
+char	*multipledup_without_quote(char **tab, int *i, char quote);
+int		remove_encapsuled(t_minijoker *mini);
+int		flemme_exit(char **tab);
+
+void	listen(t_minijoker *mini);
+void	sigint(int code);
+void	exit_minijoker(t_minijoker *mini, char *str);
+char	*get_env(t_minijoker *mini, char *str);
+int		true_exec(t_minijoker *mini);
+int		mini_exec(t_minijoker *mini);
+void	freetab(char **tab);
+int		exec_loop(t_minijoker *mini);
+int		is_mini_func(t_minijoker *mini);
+int		remove_encapsuled(t_minijoker *mini);
+int 	redirection(t_minijoker *mini);
 
 #endif

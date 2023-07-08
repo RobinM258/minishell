@@ -1,35 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   mini_tokennew.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/06 11:11:21 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/07 11:11:47 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/07 09:41:11 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/07/07 13:18:55 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include <unistd.h>
+#include "minilib.h"
 #include <stdio.h>
-#include <sys/wait.h>
-
-int main()
+t_token *mini_tokennew(t_token *lst, char *str)
 {
-    int fd1 = open("CouCou", O_RDWR | O_CREAT | O_TRUNC);
-    int fd = 1;
-    pid_t pid = fork();
-    int     statut;
+    t_token *token;
 
-	if (pid == -1) {
-		return 1;
-	} else if (pid == 0) {
-        fd = dup2(fd1, fd);
-        close(fd1);
-        write(fd, "TEST\n", 5);
-	} else 
-        fd = 1;
-    wait(&statut);
-    return 0;
+    token = NULL;
+    if (str)
+    {
+        token = (t_token *)malloc(sizeof(t_token));
+        if (!token)
+            return NULL;
+        token->content = str;
+        if (lst)
+            token->prev = mini_tokenlast(lst);
+        else
+            token->prev = NULL;
+        token->next = NULL;
+    }
+    return (token);
 }

@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   mini_strcpy.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/19 15:46:01 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/04 12:46:06 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/05 12:02:43 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/07/05 13:16:37 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "miniJoker.h"
+#include "minilib.h"
 
-void	sigint(int code)
+int	mini_strcpy(char *src, char *dst)
 {
-	(void)code;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	return ;
+	int	i;
+
+	if (!src || !dst)
+		return (-1);
+	i = -1;
+	while (src[++i] && dst[i])
+		dst[i] = src[i];
+	return (i);
 }

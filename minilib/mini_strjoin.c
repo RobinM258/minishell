@@ -1,23 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   mini_strjoin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/19 15:46:01 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/04 12:46:06 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/04 11:03:47 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/07/04 11:03:57 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "miniJoker.h"
+#include "minilib.h"
 
-void	sigint(int code)
+char	*mini_strjoin(char *s1, char *s2)
 {
-	(void)code;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	return ;
+	int		i1;
+	int		i2;
+	int		i;
+	int		j;
+	char	*red;
+
+	j = -1;
+	i = -1;
+	if (!s1 || !s2)
+		return (0);
+	i1 = mini_strlen(s1);
+	i2 = mini_strlen(s2);
+	red = malloc(sizeof(char) * (i1 + i2 + 1));
+	if (!red)
+		return (NULL);
+	while (s1[++i])
+		red[i] = s1[i];
+	while (s2[++j])
+	{
+		red[i] = s2[j];
+		i++;
+	}
+	red[i] = '\0';
+	return (red);
 }

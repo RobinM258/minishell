@@ -1,23 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   mini_tokenadd_back.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/19 15:46:01 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/04 12:46:06 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/07 09:36:08 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/07/07 13:18:29 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "miniJoker.h"
-
-void	sigint(int code)
+#include "minilib.h"
+#include <stdio.h>
+int    mini_tokenadd_back(t_token **lst, t_token *token)
 {
-	(void)code;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	return ;
+    if (!token)
+        return (0);
+    if (lst)
+    {
+        if (*lst)
+        {
+            token->prev = mini_tokenlast(*lst);
+            mini_tokenlast(*lst)->next = token;
+        }
+        else
+            *lst = token;
+    }
+    return (1);
 }

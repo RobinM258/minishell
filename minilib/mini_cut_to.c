@@ -1,23 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   mini_cut_to.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/19 15:46:01 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/04 12:46:06 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/04 11:02:05 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/07/04 11:02:13 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "miniJoker.h"
+#include "minilib.h"
 
-void	sigint(int code)
+char	*mini_cut_to(char *str, char c)
 {
-	(void)code;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	return ;
+	int		i;
+	int		size;
+	char	*ret;
+
+	size = mini_charfind(str, c);
+	if (size == -1)
+		return (NULL);
+	ret = (char *)malloc(sizeof(char) * (size + 1));
+	if (!ret)
+		return (NULL);
+	i = -1;
+	while (++i < size)
+		ret[i] = str[i];
+	ret[i] = '\0';
+	return (ret);
 }
