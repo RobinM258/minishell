@@ -1,24 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mini_tokenfirst.c                                  :+:      :+:    :+:   */
+/*   mini_tokenfind.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/07 10:42:47 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/22 15:36:29 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/18 11:08:06 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/07/22 15:36:09 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minilib.h"
 
-t_token	*mini_tokenfirst(t_token *lst)
+int	mini_tokenfind(t_token *tokens, char c, int plop)
 {
-	while (lst)
+	while (tokens)
 	{
-		if (!lst->prev)
-			return (lst);
-		lst = lst->prev;
+		if ((mini_charfind(tokens->content, c) == 0
+				&& mini_strlen(tokens->content) == 1 && !plop)
+			|| (plop && mini_charfind(tokens->content, c) == 0
+				&& mini_strlen(tokens->content) == 1
+				&& tokens->altego == OTHER))
+			return (1);
+		tokens = tokens->next;
 	}
-	return (lst);
+	return (0);
 }

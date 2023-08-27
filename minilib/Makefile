@@ -18,7 +18,16 @@ FILES = mini_charfind \
 	mini_tokenadd_back \
 	mini_tokennew \
 	mini_tokenwrite \
-	mini_tokenfirst
+	mini_tokenfirst \
+	mini_putstr_fd \
+	mini_append_path \
+	mini_is_valid_func \
+	mini_itoa \
+	mini_calloc \
+	mini_bzero \
+	mini_tolower \
+	mini_tokendelone \
+	mini_tokenfind
 
 S = $(foreach f, $(FILES), $(f).c)
 OBJ = $(S:.c=.o)

@@ -1,24 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mini_tokenfirst.c                                  :+:      :+:    :+:   */
+/*   mini_bzero.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/07 10:42:47 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/22 15:36:29 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/11 14:13:25 by iqiyu             #+#    #+#             */
+/*   Updated: 2023/07/22 15:29:25 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minilib.h"
 
-t_token	*mini_tokenfirst(t_token *lst)
+void	mini_bzero(void *s, size_t n)
 {
-	while (lst)
+	size_t	i;
+
+	if (!s)
+		return ;
+	i = 0;
+	while (i < n)
 	{
-		if (!lst->prev)
-			return (lst);
-		lst = lst->prev;
+		*(char *)(s + i) = 0;
+		i++;
 	}
-	return (lst);
 }

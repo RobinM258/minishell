@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   listener.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 14:23:21 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/08 14:25:36 by romartin         ###   ########.fr       */
+/*   Updated: 2023/07/22 15:01:32 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,26 @@
 void	listen(t_minijoker *mini)
 {
 	char	*str;
-	int		error;
 
 	while (1)
 	{
+		mini->lerror = mini->error;
+		mini->error = SUCCESS;
+		mini->redir_fd = -1;
 		str = readline(PROMPT);
-		error = parser(mini, str);
-		if (error == END)
-			exit_minijoker(mini, str);
-		if (error != QUOTE_ERROR)
-			exec_loop(mini);
-		add_history(str);
+		if (!str)
+			exit_minijoker(mini, NULL);
+		parser(mini, str);
+		if (mini->tokens)
+		{
+			if (mini->error == END)
+				exit_minijoker(mini, str);
+			if (mini->error != QUOTE_ERROR)
+				redirection(mini);
+			add_history(str);
+			mini_tokenclear(mini->tokens);
+			mini->tokens = NULL;
+		}
 		free(str);
-		mini_tokenclear(mini->tokens);
 	}
 }

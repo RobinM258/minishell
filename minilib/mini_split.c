@@ -6,13 +6,13 @@
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/04 11:05:53 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/07/07 14:42:49 by dgoubin          ###   ########.fr       */
+/*   Updated: 2023/07/22 15:33:58 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minilib.h"
 
-static t_token *quit(t_token *tokens)
+static t_token	*quit(t_token *tokens)
 {
 	mini_tokenclear(tokens);
 	return (NULL);
@@ -28,9 +28,9 @@ int	mini_len(char *str, char **charset, int i)
 		i++;
 	while (str[i])
 	{
-		if (mini_is_intab(charset, &str[i]))
+		if (mini_is_intab(charset, &str[i], 1))
 			break ;
-		while (str[i] && !mini_is_intab(charset, &str[i]) && str[i] != ' ')
+		while (str[i] && !mini_is_intab(charset, &str[i], 1) && str[i] != ' ')
 		{
 			if (str[i] == '\"' || str[i] == '\'')
 			{
@@ -47,8 +47,8 @@ int	mini_len(char *str, char **charset, int i)
 		if (str[i] && str[i] == ' ')
 			break ;
 	}
-	if (mini_is_intab(charset, &str[i]) && size == 0)
-		size += mini_is_intab(charset, &str[i]);
+	if (mini_is_intab(charset, &str[i], 1) && size == 0)
+		size += mini_is_intab(charset, &str[i], 1);
 	return (size);
 }
 
@@ -68,9 +68,10 @@ char	*ministrdup(char *str, char **charset, int	*i)
 		(*i)++;
 	while (str[*i])
 	{
-		if (mini_is_intab(charset, &str[*i]))
+		if (mini_is_intab(charset, &str[*i], 1))
 			break ;
-		while (str[*i] && !mini_is_intab(charset, &str[*i]) && str[*i] != ' ')
+		while (str[*i]
+			&& !mini_is_intab(charset, &str[*i], 1) && str[*i] != ' ')
 		{
 			if (str[*i] == '\"' || str[*i] == '\'')
 			{
@@ -84,9 +85,9 @@ char	*ministrdup(char *str, char **charset, int	*i)
 		if (str[*i] && str[*i] == ' ')
 			break ;
 	}
-	if (mini_is_intab(charset, &str[*i]) && size <= 2)
+	if (mini_is_intab(charset, &str[*i], 1) && size <= 2 && j < size)
 	{
-		if (mini_is_intab(charset, &str[*i]) == 2)
+		if (mini_is_intab(charset, &str[*i], 1) == 2)
 			res[j++] = str[(*i)++];
 		res[j++] = str[(*i)++];
 	}
@@ -106,12 +107,17 @@ int	nb_of_words(char *str, char **charset)
 	{
 		while (str[i] && str[i] == ' ')
 			i++;
-		cpt++;
 		if (!str[i])
 			break ;
-		if (mini_is_intab(charset, &str[i]))
+		cpt++;
+		if (mini_is_intab(charset, &str[i], 1))
+		{
 			i++;
-		while (str[i] && !mini_is_intab(charset, &str[i]) && str[i] != ' ')
+			if ((str[i] == '<' && str[i - 1] == '<')
+				|| (str[i] == '>' && str[i - 1] == '>'))
+				i++;
+		}
+		while (str[i] && !mini_is_intab(charset, &str[i], 1) && str[i] != ' ')
 		{
 			if (str[i] == '\"' || str[i] == '\'')
 			{
@@ -144,25 +150,36 @@ int	stris_encapsuled(char *str)
 	return (quote == '\0');
 }
 
-t_token	*mini_split(char *str, char **charset)
+t_token	*mini_split(char *str, char **charset, int *error)
 {
 	char	*content;
 	int		size;
 	int		ij[2];
 	t_token	*tokens;
+	int		plop;
 
 	tokens = NULL;
-	if (!str || !stris_encapsuled(str))
+	if (!str)
 		return (NULL);
+	if (!stris_encapsuled(str))
+	{
+		*error = QUOTE_ERROR;
+		return (NULL);
+	}
 	size = nb_of_words(str, charset);
 	ij[0] = 0;
 	ij[1] = 0;
 	while (ij[0] < size)
 	{
+		if (!mini_strcmp(&str[ij[1]], " '|'", 1)
+			|| !mini_strcmp(&str[ij[1]], " \"|\"", 1))
+			plop = PARAM;
+		else
+			plop = OTHER;
 		content = ministrdup(str, charset, &ij[1]);
 		if (!content)
 			return (quit(tokens));
-		if (!mini_tokenadd_back(&tokens, mini_tokennew(tokens, content)))
+		if (!mini_tokenadd_back(&tokens, mini_tokennew(content, plop)))
 			return (quit(tokens));
 		ij[0]++;
 	}
