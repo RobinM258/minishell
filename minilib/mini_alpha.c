@@ -1,32 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mini_strdup.c                                      :+:      :+:    :+:   */
+/*   mini_alpha.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/04 11:01:16 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/08/31 13:56:34 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/07/31 16:15:29 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/08/31 11:22:29 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minilib.h"
 
-char	*mini_strdup(char *s1)
+int	mini_alpha(char c)
 {
-	int		cpt;
-	char	*res;
-	int		i;
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+}
 
-	if (!s1)
-		return (NULL);
-	cpt = mini_strlen(s1);
-	res = (char *)malloc(sizeof(char) * (cpt + 1));
-	if (!res)
-		return (NULL);
-	i = -1;
-	while (s1[++i])
-		res[i] = s1[i];
-	res[i] = '\0';
-	return (res);
+int	mini_alphanum(char c)
+{
+	return (mini_alpha(c) || (c >= '0' && c <= '9'));
+}
+
+int	mini_has_alpha(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		if (mini_alpha(str[i++]))
+			return (1);
+	return (0);
 }

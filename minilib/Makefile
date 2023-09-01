@@ -6,6 +6,7 @@ FILES = mini_charfind \
 	mini_is_intab \
 	mini_lrstrcmp \
 	mini_split \
+	mini_split_bis \
 	mini_strcmp \
 	mini_strdup \
 	mini_strjoin \
@@ -27,7 +28,13 @@ FILES = mini_charfind \
 	mini_bzero \
 	mini_tolower \
 	mini_tokendelone \
-	mini_tokenfind
+	mini_tokenfind \
+	mini_alpha \
+	mini_atoi \
+	mini_ft_lst_last \
+	mini_ft_lst_new \
+	mini_ft_lst_add_back \
+	mini_ft_lst_clear
 
 S = $(foreach f, $(FILES), $(f).c)
 OBJ = $(S:.c=.o)
@@ -42,7 +49,7 @@ $(NAME): $(OBJ)
 	@printf ">  \x1b[32m$(NAME) compiled \x1b[0m\n"
 
 .c.o:
-	@gcc $(CFLAGS) -o $@ -c $< -fsanitize=address -g
+	@gcc $(CFLAGS) -o $@ -c $<
 
 clean:
 	@rm -rf $(OBJ)

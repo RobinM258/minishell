@@ -6,58 +6,11 @@
 /*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 17:35:56 by romartin          #+#    #+#             */
-/*   Updated: 2023/08/27 22:16:06 by romartin         ###   ########.fr       */
+/*   Updated: 2023/09/01 19:05:41 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniJoker.h"
-void	testprint(t_env *env)
-{
-	while (env)
-	{
-		printf("%s=%s\n", env->var, env->val);
-		env = env->next;
-	}
-}
-t_env	*ft_lst_new(char *var, char *val)
-{
-	t_env	*tmp;
-
-	tmp = malloc(sizeof(t_env));
-	if (!tmp)
-		exit(EXIT_FAILURE);
-	tmp->val = val;
-	tmp->var = var;
-	tmp->next = NULL;
-	return (tmp);
-}
-
-t_env	*ft_lstlast(t_env *env)
-{
-	while (env->next)
-	{
-		if (env->next == NULL)
-			return (env);
-		env = env->next;
-	}
-	return (env);
-}
-
-void	ft_lstadd_back(t_env **lst, char *var, char *val)
-{
-	t_env	*new;
-
-	new = ft_lst_new(var, val);
-	if (lst)
-	{
-		if (*lst)
-			ft_lstlast(*lst)->next = new;
-		else
-		{
-			*lst = new;
-		}
-	}
-}
 
 void	mini_lst_change(t_env **env, char *path)
 {
@@ -75,94 +28,59 @@ void	mini_lst_change(t_env **env, char *path)
 		}
 		tmp = (tmp)->next;
 	}
-	ft_lstadd_back(env, split[0], split[1]);
+	mini_ft_lst_add_back(env, split[0], split[1]);
+	free(split);
 }
 
-
-char	*get_env(t_minijoker *mini, char *str)
-{
-	int	i;
-
-	i = 0;
-	while (mini->env_copy[i])
-	{
-		if (mini_lrstrcmp(mini->env_copy[i++], str) == 0)
-			return (&mini->env_copy[i - 1]
-				[mini_charfind(mini->env_copy[i - 1], '=') + 1]);
-	}
-	return (NULL);
-}
-
-int egal(t_token *tokens)
+int	egal(t_token *tokens)
 {
 	int	j;
 
-	while(tokens)
+	while (tokens)
 	{
 		j = mini_charfind(tokens->content, '=');
 		if (j > 0 && j != mini_strlen(tokens->content))
 			return (1);
 		tokens = tokens->next;
 	}
-	return(0);
+	return (0);
 }
-int check_env(t_token *tokens)
+
+int	check_env(t_minijoker *mini, t_token *tokens)
 {
-	while (tokens)
+	while (tokens && !mini_is_intab(mini->sep, tokens->content, 0))
 	{
 		if (egal(tokens) == 0)
 		{
 			mini_putstr_fd(2, "env: ");
 			mini_putstr_fd(2, tokens->content);
 			mini_putstr_fd(2, ": Invalid argument\n");
-			return (EXIT_FAILURE);
+			return (1);
 		}
 		tokens = tokens->next;
-	}	
-	return (EXIT_SUCCESS);
-}
-int parsing_env(t_minijoker *mini, t_token *tokens)
-{
-	char **str;
-	int l;
-	int i;
-	
-	i = -1;
-	l = mini_tablen(mini->env_copy);
-	while (tokens)
-	{
-		l++;
-		tokens = tokens->next;
 	}
-	str = (char **)malloc(sizeof(char *) * (l + 1));
-	if (!str)
-		return (MALLOC_ERROR);
-	
 	return (0);
 }
 
-int	mini_env(t_minijoker *mini)
+int	mini_env(t_minijoker *mini, int i)
 {
-	t_env *env = NULL;
-	int	i;
+	t_env	*env;
+	t_env	*first;
 
-	i = 0;
-	parsing_env(mini, mini->tokens);
+	env = NULL;
 	mini->tokens = mini->tokens->next;
-	if (check_env(mini->tokens) == 1)
+	if (check_env(mini, mini->tokens) == 1)
 		return (EXIT_FAILURE);
 	while (mini->env_copy[i])
-	{
-		mini_lst_change(&env, mini->env_copy[i]);
-		i++;
-	}
-	while (mini->tokens)
+		mini_lst_change(&env, mini->env_copy[i++]);
+	while (mini->tokens && !mini_is_intab(mini->sep, mini->tokens->content, 0))
 	{
 		mini_lst_change(&env, mini->tokens->content);
 		mini->tokens = mini->tokens->next;
 	}
-	if (mini->tokens)
+	if (mini->tokens && !mini_is_intab(mini->sep, mini->tokens->content, 0))
 		mini->tokens = mini->tokens->next;
+	first = env;
 	while (env)
 	{
 		mini_putstr_fd(mini->fdout, env->var);
@@ -171,6 +89,6 @@ int	mini_env(t_minijoker *mini)
 		mini_putstr_fd(mini->fdout, "\n");
 		env = env->next;
 	}
+	mini_ft_lst_clear(first);
 	return (SUCCESS);
-
 }

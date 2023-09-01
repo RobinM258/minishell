@@ -6,17 +6,12 @@
 /*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:23:12 by iqiyu             #+#    #+#             */
-/*   Updated: 2023/08/25 21:41:20 by romartin         ###   ########.fr       */
+/*   Updated: 2023/09/01 19:14:45 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniJoker.h"
 
-/* (WIP) FONCTION QUI EXECUTE LES FONCTIONS BUILTIN */
-/* */
-/* prend en arguments les tokens /!\ CA NE GERE QUE LA PREMIERE COMMANDE /!\ */
-/* */
-/* renvoie -1 si aucune commande n'est execute */
 void	mini_exec(t_minijoker *mini)
 {
 	mini->error = UNKNOW_COMMAND;
@@ -27,7 +22,9 @@ void	mini_exec(t_minijoker *mini)
 	else if (mini_strcmp(mini->tokens->content, "unset", 0) == 0)
 		mini_unset(mini);
 	else if (mini_strcmp(mini->tokens->content, "export", 0) == 0)
-		mini_export(mini);
+		mini->error = mini_export(mini, 0);
 	else if (mini_strcmp(mini->tokens->content, "env", 0) == 0)
-		mini->error = mini_env(mini);
+		mini->error = mini_env(mini, 0);
+	else if (mini_strcmp(mini->tokens->content, "pwd", 0) == 0)
+		mini->error = mini_pwd();
 }

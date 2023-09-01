@@ -3,20 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   mini_export.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 14:24:56 by romartin          #+#    #+#             */
-/*   Updated: 2023/07/20 12:40:23 by dgoubin          ###   ########.fr       */
+/*   Updated: 2023/09/01 20:20:04 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniJoker.h"
 
-static char	**copy_tab(t_minijoker *mini, char **str, int i)
+static char **mini_strs_copy(t_minijoker *mini, char *str)
 {
-	char	**tmp;
-	char	*var;
+	int i;
+	char **tmp;
+	char *var;
 
+	i = mini_tablen(mini->env_copy);
 	tmp = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!tmp)
 		return (NULL);
@@ -24,72 +26,101 @@ static char	**copy_tab(t_minijoker *mini, char **str, int i)
 	while (mini->env_copy[i])
 	{
 		var = mini_cut_to(mini->env_copy[i], '=');
-		if (mini_strcmp(var, str[0], 0) == 0)
-			tmp[i] = mini_strdup(mini->tokens->content);
+		if (str && mini_strcmp(var, str, 0) == 0)
+			tmp[i] = mini_strdup(str);
 		else
 			tmp[i] = mini_strdup(mini->env_copy[i]);
 		free(var);
 		i++;
 	}
-	if (get_env(mini, str[0]) == NULL)
-		tmp[i++] = mini_strdup(mini->tokens->content);
 	tmp[i] = NULL;
 	return (tmp);
 }
 
-/* Gestion de la fonction export  */
-/* prend mini en argument pour les token */
-/* renvoie 1 si elle réussi */
-void	mini_export(t_minijoker *mini)
+static void	mini_lst_change(t_env **env, char *path)
 {
-	char	**str;
-	char	**tmp;
-	int		i;
+	char	**split;
+	t_env	*tmp;
 
-	mini->error = SUCCESS;
-	mini->tokens = mini->tokens->next;
-	if (!mini->tokens || !mini->tokens->content
-		|| mini_is_intab(mini->sep, mini->tokens->content, 1))
+	split = mini_ft_split(path, '=');
+	tmp = *env;
+	while (tmp)
 	{
-		i = 0;
-		while (mini->env_copy[i])
+		if (mini_strcmp((tmp)->var, split[0], 0) == 0)
 		{
-			printf("%s\n", mini->env_copy[i]);
-			i++;
+			(tmp)->val = split[1];
+			return ;
 		}
-		return ;
+		tmp = (tmp)->next;
 	}
-	str = mini_ft_split(mini->tokens->content, '=');
-	if (!str)
+	mini_ft_lst_add_back(env, split[0], split[1]);
+	free(split);
+}
+
+static int	egal(t_token *tokens)
+{
+	int	j;
+
+	while (tokens)
 	{
-		mini->error = MALLOC_ERROR;
-		mini_putstr_fd(2, "export: malloc failed");
-		return ;
+		j = mini_charfind(tokens->content, '=');
+		if (j > 0 && j != mini_strlen(tokens->content))
+			return (1);
+		tokens = tokens->next;
 	}
-	if (!str[0])
+	return (0);
+}
+
+int	check_export(t_minijoker *mini, t_token *tokens)
+{
+	while (tokens && !mini_is_intab(mini->sep, tokens->content, 0))
 	{
-		mini_freetab(str);
-		return ;
+		if (egal(tokens) == 0)
+		{
+			mini_putstr_fd(2, "env: ");
+			mini_putstr_fd(2, tokens->content);
+			mini_putstr_fd(2, ": Invalid argument\n");
+			return (1);
+		}
+		tokens = tokens->next;
 	}
-	if (mini->tokens->content[0] == '=')
-	{
-		mini_putstr_fd(2, "export: `");
-		mini_putstr_fd(2, mini->tokens->content);
-		mini_putstr_fd(2, "': not a valid identifier\n");
-		mini->error = INPUT_ERROR;
-	}
-	i = mini_tablen(mini->env_copy);
-	if (get_env(mini, str[0]) == NULL)
-		i++;
-	tmp = copy_tab(mini, str, i);
-	if (!tmp)
-	{
-		mini->error = MALLOC_ERROR;
-		mini_putstr_fd(2, "export: malloc failed");
-		return ;
-	}
-	mini_freetab(mini->env_copy);
-	mini->env_copy = tmp;
-	mini_freetab(str);
+	return (0);
+}
+
+int	mini_export(t_minijoker *mini, int i)
+{
+	char *str;
+	char **tmp;
+	t_env	*env;
+	t_env	*first;
+
+	env = NULL;
 	mini->tokens = mini->tokens->next;
+	if (check_export(mini, mini->tokens) == 1)
+		return (EXIT_FAILURE);
+	while (mini->env_copy[i])
+		mini_lst_change(&env, mini->env_copy[i++]);
+	while (mini->tokens && !mini_is_intab(mini->sep, mini->tokens->content, 0))
+	{
+		mini_lst_change(&env, mini->tokens->content);
+		mini->tokens = mini->tokens->next;
+	}
+	if (mini->tokens && !mini_is_intab(mini->sep, mini->tokens->content, 0))
+		mini->tokens = mini->tokens->next;
+	first = env;
+	while (env)
+	{
+		mini_putstr_fd(mini->fdout, env->var);
+		mini_putstr_fd(mini->fdout, "=");
+		mini_putstr_fd(mini->fdout, env->val);
+		mini_putstr_fd(mini->fdout, "\n");
+		str = mini_strjoin(env->var, "=");
+		str = mini_strjoin(str, env->val);
+		tmp = mini_strs_copy(mini, str);
+		mini_freetab(mini->env_copy);
+		mini->env_copy = tmp;
+		env = env->next;
+	}
+	mini_ft_lst_clear(first);
+	return (SUCCESS);
 }

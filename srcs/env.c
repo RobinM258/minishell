@@ -3,27 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/23 20:21:06 by iqiyu             #+#    #+#             */
-/*   Updated: 2023/07/01 17:35:09 by romartin         ###   ########.fr       */
+/*   Created: 2023/08/31 13:42:06 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/08/31 13:42:39 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniJoker.h"
 
-char    *getEnv(t_miniJoker *mini, char *str)
+char	*get_env_bis(t_minijoker *mini, char *str)
 {
-    int i;
-    char *a;
+	int	i;
 
-    i = 0;
-    while (mini->env_copy[i])
-    {
-        a = ft_cut_to(mini->env_copy[i++], '=');
-        if (ft_strcmp(a , str, 0) == 0)
-            return (&mini->env_copy[i - 1][ft_charfind(mini->env_copy[i - 1], '=') + 1]);
-        free(a);
-    }
-    return (NULL);
+	i = 0;
+	while (mini->env_copy[i])
+	{
+		if (mini_strcmp(mini->env_copy[i++], str, 0) == 0)
+			return (&mini->env_copy[i - 1]
+				[mini_charfind(mini->env_copy[i - 1], '=') + 1]);
+	}
+	return (NULL);
+}
+
+char	*get_env(t_minijoker *mini, char *str)
+{
+	int	i;
+
+	i = 0;
+	while (mini->env_copy[i])
+	{
+		if (mini_lrstrcmp(mini->env_copy[i++], str) == 0)
+			return (&mini->env_copy[i - 1]
+				[mini_charfind(mini->env_copy[i - 1], '=') + 1]);
+	}
+	return (NULL);
 }

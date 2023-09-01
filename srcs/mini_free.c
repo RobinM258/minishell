@@ -3,39 +3,56 @@
 /*                                                        :::      ::::::::   */
 /*   mini_free.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 18:53:42 by iqiyu             #+#    #+#             */
-/*   Updated: 2023/07/22 15:01:39 by dgoubin          ###   ########.fr       */
+/*   Updated: 2023/09/01 19:56:52 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniJoker.h"
 
-/* FONCTION QUI FREE UN TABLEAU DE CARACTERES */
-/* */
-/* prend en argument un tableau de caracteres */
-/* */
-/* renvoie rien */
-void	freetab(char **tab)
+char	*freetab(char **tab)
 {
 	int	i;
 
 	if (!tab)
-		return ;
+		return (NULL);
 	i = 0;
 	while (tab[i])
 		free(tab[i++]);
+	return (NULL);
 }
 
-/* FONCTION QUI FREE ET TERMINE LE PROGRAMME */
-/* */
-/* prend en argument la structure t_minijoker */
-/* prend en argument le dernier input de l'utilisateur a free */
-/* */
-/* renvoie rien */
+static int	error_test(t_minijoker *mini, int error)
+{
+	if (mini->tokens && mini->tokens->next)
+	{
+		if (mini->tokens->next->content
+			&& mini_has_alpha(mini->tokens->next->content))
+		{
+			mini_putstr_fd(2, "miniJoker: exit: ");
+			mini_putstr_fd(2, mini->tokens->next->content);
+			mini_putstr_fd(2, ": numeric argument required\n");
+			error = NUM_ARG;
+		}
+		else
+			error = mini_atoi(mini->tokens->next->content);
+	}
+	return (error);
+}
+
 void	exit_minijoker(t_minijoker *mini, char *str)
 {
+	int	error;
+	int	i;
+
+	write(1, "exit\n", 5);
+	i = 0;
+	error = mini->error;
+	if (error == END)
+		error = SUCCESS;
+	error = error_test(mini, error);
 	freetab(mini->env_copy);
 	free(mini->env_copy);
 	if (mini->tokens)
@@ -43,6 +60,5 @@ void	exit_minijoker(t_minijoker *mini, char *str)
 	free(str);
 	rl_clear_history();
 	//system("leaks minijoker");
-	write(1, "exit\n", 5);
-	exit(EXIT_SUCCESS);
+	exit(error);
 }

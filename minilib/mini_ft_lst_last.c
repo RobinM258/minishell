@@ -1,32 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mini_strdup.c                                      :+:      :+:    :+:   */
+/*   mini_ft_lst_last.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/04 11:01:16 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/08/31 13:56:34 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/08/31 13:11:41 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/08/31 13:14:04 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minilib.h"
 
-char	*mini_strdup(char *s1)
+t_env	*mini_ft_lst_last(t_env *env)
 {
-	int		cpt;
-	char	*res;
-	int		i;
-
-	if (!s1)
-		return (NULL);
-	cpt = mini_strlen(s1);
-	res = (char *)malloc(sizeof(char) * (cpt + 1));
-	if (!res)
-		return (NULL);
-	i = -1;
-	while (s1[++i])
-		res[i] = s1[i];
-	res[i] = '\0';
-	return (res);
+	while (env->next)
+	{
+		if (env->next == NULL)
+			return (env);
+		env = env->next;
+	}
+	return (env);
 }
