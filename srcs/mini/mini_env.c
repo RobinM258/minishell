@@ -6,7 +6,7 @@
 /*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 17:35:56 by romartin          #+#    #+#             */
-/*   Updated: 2023/09/01 19:05:41 by romartin         ###   ########.fr       */
+/*   Updated: 2023/09/04 21:06:32 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	check_env(t_minijoker *mini, t_token *tokens)
 			return (1);
 		}
 		tokens = tokens->next;
-	}
+	}	
 	return (0);
 }
 

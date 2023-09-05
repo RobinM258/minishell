@@ -25,9 +25,9 @@ OBJ = $(SRC:.c=.o)
 
 FS = -fsanitize=address -g
 
-CFLAGS = -Iheaders -I/Users/romartin/.brew/opt/readline/include/ -Werror -Wextra -Wall -fsanitize=address -g
+CFLAGS = -Iheaders -I/Users/romartin/.brew/opt/readline/include/ -Werror -Wextra -Wall
 
-GFLAGS = -Iheaders $(LIB) -lreadline -L/Users/romartin/.brew/opt/readline/lib -Werror -Wextra -Wall -fsanitize=address -g
+GFLAGS = -Iheaders $(LIB) -lreadline -L/Users/romartin/.brew/opt/readline/lib -Werror -Wextra -Wall
 
 all: $(NAME)
 r: re
@@ -35,11 +35,11 @@ r: re
 
 $(NAME): $(LIB) $(OBJ)
 	@printf "> \x1b[32mAll objects compiled\x1b[0m\n"
-	@gcc -o $(NAME) $(OBJ) $(GFLAGS)
+	@gcc -o $(NAME) $(OBJ) $(GFLAGS)  -fsanitize=address -g
 	@printf "> \x1b[32mExecutable compiled\x1b[0m\n"
 
 .c.o:
-	@gcc $(CFLAGS) -o $@ -c $<
+	@gcc $(CFLAGS) -o $@ -c $< -g
 
 $(LIB):
 	@make -C minilib

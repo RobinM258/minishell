@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   miniJoker.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/04 12:22:54 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/09/01 19:11:05 by romartin         ###   ########.fr       */
+/*   Updated: 2023/08/31 14:04:03 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int		mini_env(t_minijoker *mini, int i);
 int		mini_echo(t_minijoker *mini);
 int		mini_pwd(void);
 void	mini_cd(t_minijoker *mini);
-int		mini_export(t_minijoker *mini, int i);
+void	mini_export(t_minijoker *mini);
 void	mini_unset(t_minijoker *mini);
 
 /* Parsing */
