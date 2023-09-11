@@ -1,23 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   mini_stradd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/19 15:46:01 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/09/06 17:58:58 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/09/09 17:45:04 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/09/10 14:47:53 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "miniJoker.h"
+#include "minilib.h"
 
-void	sigint(int code)
+void	mini_stradd(char *s1, char *toadd)
 {
-	(void)code;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	return ;
+	int	i;
+	int	j;
+
+	j = 0;
+	i = 0;
+	while (s1[i])
+		i++;
+	while (toadd[j])
+		s1[i++] = toadd[j++];
+	s1[i] = '\0';
 }

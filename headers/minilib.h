@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minilib.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/04 12:23:29 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/08/31 14:32:28 by dgoubin          ###   ########.fr       */
+/*   Updated: 2023/09/11 20:17:43 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ typedef struct s_env
 }	t_env;
 
 enum e_plop	{PARAM,
+	NO_SPACE,
 	OTHER};
-	enum e_errors {SUCCESS,
+	enum e_errors {HERE_DOC,
 	FAILURE,
 	ARG_NUMBER,
 	END,
@@ -47,6 +48,7 @@ enum e_plop	{PARAM,
 	struct s_token * prev;
 } t_token;
 
+void	mini_stradd(char *s1, char *toadd);
 t_token	*mini_split(char *str, char **charset, int *error);
 int		mini_len(char *str, char **charset, int i);
 char	*ministrdup(char *str, char **charset, int	*i);
@@ -61,7 +63,7 @@ int		mini_lrstrcmp(char *s1, char *s2);
 int		mini_is_intab(char **tab, char *str, int p);
 char	*mini_cut_to(char *str, char c);
 int		mini_charfind(char *str, char c);
-void	mini_freetab(char **tab);
+char	**mini_freetab(char **tab);
 int		mini_strcpy(char *src, char *dst);
 void	mini_putstr_fd(int fd, char *str);
 char	*mini_append_path(char *s1, char *s2);

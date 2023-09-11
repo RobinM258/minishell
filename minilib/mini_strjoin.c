@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_strjoin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/04 11:03:47 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/09/04 21:03:03 by romartin         ###   ########.fr       */
+/*   Updated: 2023/09/10 14:48:13 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	*mini_strjoin(char *s1, char *s2)
 	if (!s1 && !s2)
 		return (NULL);
 	if (!s1)
-	 	size = 0;
+		size = 0;
 	else
 		size = mini_strlen(s1);
 	if (s2)

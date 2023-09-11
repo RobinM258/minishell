@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_free.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 18:53:42 by iqiyu             #+#    #+#             */
-/*   Updated: 2023/09/02 15:06:36 by dgoubin          ###   ########.fr       */
+/*   Updated: 2023/09/11 21:13:45 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,19 @@ static int	error_test(t_minijoker *mini, int error)
 {
 	if (mini->tokens && mini->tokens->next)
 	{
-		if (mini->tokens->next->content
+		if (mini->tokens->next->next)
+		{
+			mini_putstr_fd(2, "miniJoker: exit: ");
+			mini_putstr_fd(2, "too many arguments\n");
+			error = 1;
+		}
+		else if (mini->tokens->next->content
 			&& mini_has_alpha(mini->tokens->next->content))
 		{
 			mini_putstr_fd(2, "miniJoker: exit: ");
 			mini_putstr_fd(2, mini->tokens->next->content);
 			mini_putstr_fd(2, ": numeric argument required\n");
-			error = NUM_ARG;
+			error = 255;
 		}
 		else
 			error = mini_atoi(mini->tokens->next->content);
@@ -51,7 +57,7 @@ void	exit_minijoker(t_minijoker *mini, char *str)
 	i = 0;
 	error = mini->error;
 	if (error == END)
-		error = SUCCESS;
+		error = HERE_DOC;
 	error = error_test(mini, error);
 	freetab(mini->env_copy);
 	free(mini->env_copy);
@@ -59,6 +65,5 @@ void	exit_minijoker(t_minijoker *mini, char *str)
 		mini_tokenclear(mini->tokens);
 	free(str);
 	rl_clear_history();
-	//system("leaks minijoker");
 	exit(error);
 }

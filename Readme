@@ -185,3 +185,13 @@ TESTS:   ✖️     ✖️
 
     unset HOME ==> cd                                            ✔ si unset HOME cd = HOME not set
     unset PATH ==> ls                                            ✔ si unset PATH ls = ls : not such file or directory
+
+recommencer le parsing:
+    on avance et on ajoute dans la t_tokens, 
+        SI ya un " on modifie les $...
+        SI ya un ' on ignore tout ce qu il y a apres
+        SI ya un $ on modifie jusque l espace si c est pas dans un '
+        SI on a que "|" ou '|' on met un flag param
+        PAREIL pour "$" et $
+        SI ya un separateur (>> < > << |) on en fait un token
+        SI ya des "" et ensuite colle des trucs en assemble

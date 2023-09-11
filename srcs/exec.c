@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:36:25 by iqiyu             #+#    #+#             */
-/*   Updated: 2023/08/31 12:11:25 by dgoubin          ###   ########.fr       */
+/*   Updated: 2023/09/11 20:43:00 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,14 @@ static char	**mini_link(char **sep, t_token *tokens)
 	return (arg);
 }
 
-int	exec_loop(t_minijoker *mini)
+static void	check_path(t_minijoker *mini)
 {
-	mini_exec(mini);
-	if (mini->error == UNKNOW_COMMAND)
-		mini->error = true_exec(mini);
-	return (mini->error);
+	if (get_env(mini, "PATH") == NULL
+		|| mini_strcmp(get_env(mini, "PATH"), "", 0) == 0)
+	{
+		printf("%s: No such file or directory\n", mini->tokens->content);
+		exit(UNKNOW_COMMAND);
+	}
 }
 
 static void	exec_fils(t_minijoker *mini, int i, char *str)
@@ -66,12 +68,12 @@ static void	exec_fils(t_minijoker *mini, int i, char *str)
 	char	**args;
 	char	**path;
 
-	if (get_env(mini, "PATH") == NULL
-		|| mini_strcmp(get_env(mini, "PATH"), "", 0) == 0)
+	if (access(mini->tokens->content, X_OK) == 0)
 	{
-		printf("%s: No such file or directory\n", mini->tokens->content);
-		exit(UNKNOW_COMMAND);
+		args = mini_link(mini->sep, mini->tokens);
+		execve(mini->tokens->content, args, NULL);
 	}
+	check_path(mini);
 	path = mini_ft_split(get_env(mini, "PATH"), ':');
 	while (path[i])
 	{
@@ -106,7 +108,7 @@ int	true_exec(t_minijoker *mini)
 		exec_fils(mini, i, str);
 	wait(&status);
 	if (status == 0)
-		return (SUCCESS);
+		return (0);
 	if (!mini->tokens->content)
 		return (ARG_NUMBER);
 	return (status);

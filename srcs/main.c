@@ -6,7 +6,7 @@
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 14:15:17 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/08/31 12:09:25 by dgoubin          ###   ########.fr       */
+/*   Updated: 2023/09/10 16:05:11 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	mini_init(t_minijoker *mini, char *env[])
 	mini->sep[3] = "<";
 	mini->sep[4] = ">";
 	mini->sep[5] = NULL;
-	mini->error = SUCCESS;
+	mini->error = 0;
 	mini->tokens = NULL;
 }
 
@@ -65,18 +65,18 @@ int	main(int ac, char *av[], char **env)
 
 	(void)av;
 	rl_catch_signals = 0;
-	mini.error = SUCCESS;
+	mini.error = 0;
 	if (ac != 1)
 	{
 		write(2, "Bad arg number\n", 15);
 		exit(ARG_NUMBER);
 	}
 	mini_init(&mini, env);
-	if (mini.error != SUCCESS)
+	if (mini.error != 0)
 		return (mini.error);
 	print_train();
 	signal(SIGINT, &sigint);
 	signal(SIGQUIT, SIG_IGN);
 	listen(&mini);
-	return (SUCCESS);
+	return (0);
 }

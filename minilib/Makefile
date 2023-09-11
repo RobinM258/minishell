@@ -1,12 +1,12 @@
 NAME = minilib.a
 
 FILES = mini_charfind \
+	mini_stradd \
+	mini_split \
 	mini_cut_to \
 	mini_ft_split \
 	mini_is_intab \
 	mini_lrstrcmp \
-	mini_split \
-	mini_split_bis \
 	mini_strcmp \
 	mini_strdup \
 	mini_strjoin \

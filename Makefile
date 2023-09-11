@@ -1,17 +1,19 @@
-NAME = minijoker
+NAME = minishell
 
 LIB = minilib.a
 
 FILES = listener \
 		parser \
-		parser_env \
 		signals \
 		mini_free \
 		exec \
+		parse_env \
+		mini_lens \
 		mini_exec \
 		mini/mini_echo \
 		mini/mini_env \
 		mini/mini_export \
+		mini/mini_export_bis \
 		mini/mini_unset \
 		mini/mini_cd \
 		mini/mini_pwd \
@@ -25,9 +27,9 @@ OBJ = $(SRC:.c=.o)
 
 FS = -fsanitize=address -g
 
-CFLAGS = -Iheaders -I/Users/romartin/.brew/opt/readline/include/ -Werror -Wextra -Wall
+CFLAGS = -Iheaders -I/Users/$(USER)/.brew/opt/readline/include/ -Werror -Wextra -Wall
 
-GFLAGS = -Iheaders $(LIB) -lreadline -L/Users/romartin/.brew/opt/readline/lib -Werror -Wextra -Wall
+GFLAGS = -Iheaders $(LIB) -lreadline -L/Users/$(USER)/.brew/opt/readline/lib -Werror -Wextra -Wall
 
 all: $(NAME)
 r: re
@@ -35,11 +37,11 @@ r: re
 
 $(NAME): $(LIB) $(OBJ)
 	@printf "> \x1b[32mAll objects compiled\x1b[0m\n"
-	@gcc -o $(NAME) $(OBJ) $(GFLAGS)  -fsanitize=address -g
+	@gcc -o $(NAME) $(OBJ) $(GFLAGS)
 	@printf "> \x1b[32mExecutable compiled\x1b[0m\n"
 
 .c.o:
-	@gcc $(CFLAGS) -o $@ -c $< -g
+	@gcc $(CFLAGS) -o $@ -c $<
 
 $(LIB):
 	@make -C minilib

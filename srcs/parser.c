@@ -6,58 +6,57 @@
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 14:34:13 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/08/31 12:56:57 by dgoubin          ###   ########.fr       */
+/*   Updated: 2023/09/10 15:44:01 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniJoker.h"
 
-void	parse_dol_bis(t_token **nt, char *tmp)
+int	is_func(t_minijoker *mini, char *str)
 {
-	int	i;
+	char	**argv;
+	int		i;
 
+	argv = mini_ft_split(get_env(mini, "PATH"), ':');
 	i = 0;
-	while (tmp[i])
+	while (argv[i])
 	{
-		if (tmp[i] == '$')
+		if (mini_is_valid_func(argv[i], str))
 		{
-			mini_tokenadd_back(nt,
-				mini_tokennew(mini_cut_to(&tmp[i], ' '), OTHER));
-			while (tmp[i] && tmp[i] != ' ')
-				i++;
-			if (tmp[i])
-				i++;
+			freetab(argv);
+			return (1);
 		}
-		if (!tmp[i])
-			break ;
-		mini_tokenadd_back(nt,
-			mini_tokennew(mini_cut_to(&tmp[i], '$'), OTHER));
-		while (tmp[i] && tmp[i] != '$')
-			i++;
+		i++;
 	}
+	freetab(argv);
+	return (0);
 }
 
-void	parse_dol(t_token *tokens)
+char	*mini_cut_to2(char *str, char *charset)
 {
-	char	*tmp;
-	t_token	*nt;
+	int		i;
+	char	**tab;
+	char	*res;
 
-	nt = NULL;
-	while (tokens)
+	i = 0;
+	tab = mini_ft_split(charset, ' ');
+	while (str[i++])
+		if (mini_is_intab(tab, &str[i], 1) || str[i] == ' ')
+			break ;
+	res = (char *)malloc(sizeof(char) * (i + 1));
+	if (!res)
+		return (*mini_freetab(tab));
+	i = 0;
+	while (str[i])
 	{
-		if (mini_charfind(tokens->content, '$') < mini_strlen(tokens->content))
-		{
-			tmp = tokens->content;
-			parse_dol_bis(&nt, tmp);
-			nt->prev = tokens->prev;
-			mini_tokenlast(nt)->next = tokens->next;
-			if (tokens->prev)
-				tokens->prev->next = nt;
-			if (tokens->next)
-				tokens->next->prev = nt;
-		}
-		tokens = tokens->next;
+		if (mini_is_intab(tab, &str[i], 1) || str[i] == ' ')
+			break ;
+		res[i] = str[i];
+		i++;
 	}
+	res[i] = '\0';
+	mini_freetab(tab);
+	return (res);
 }
 
 void	parser(t_minijoker *mini, char *input)
@@ -69,13 +68,10 @@ void	parser(t_minijoker *mini, char *input)
 		return ;
 	}
 	mini->tokens = mini_split(input, mini->sep, &mini->error);
-	parse_dol(mini->tokens);
-	parse_env(mini, mini->tokens);
-	if (mini->error == QUOTE_ERROR)
-	{
-		mini_putstr_fd(2, "parsing error: quote unclosed\n");
+	if (!mini->tokens)
 		return ;
-	}
+	parse_env(mini);
+	mini->first = mini->tokens;
 	if (mini->tokens && mini_strcmp(mini->tokens->content, "exit", 0) == 0)
 	{
 		mini->end = 1;

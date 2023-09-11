@@ -3,57 +3,59 @@
 /*                                                        :::      ::::::::   */
 /*   mini_split.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/04 11:05:53 by dgoubin           #+#    #+#             */
-/*   Updated: 2023/08/31 12:26:24 by dgoubin          ###   ########.fr       */
+/*   Created: 2023/09/10 14:39:31 by dgoubin           #+#    #+#             */
+/*   Updated: 2023/09/11 20:32:33 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minilib.h"
 
-static int	nb_of_words2(char *str, char **charset, int i, char quote)
+static int	fill(char *str, char **charset, char *res, int *i)
 {
-	while (str[i] && !mini_is_intab(charset, &str[i], 1) && str[i] != ' ')
-	{
-		if (str[i] == '\"' || str[i] == '\'')
-		{
-			quote = str[i++];
-			while (str[i] && str[i++] != quote)
-				;
-		}
-		else
-			i++;
-	}
-	return (i);
-}
-
-int	nb_of_words(char *str, char **charset)
-{
-	int	cpt;
-	int	i;
-	int	quote;
+	int		j;
+	char	quote;
 
 	quote = '\0';
-	i = 0;
-	cpt = 0;
-	while (str[i])
+	j = 0;
+	while (str[*i])
 	{
-		while (str[i] && str[i] == ' ')
-			i++;
-		if (!str[i])
+		if (!quote && (str[*i] == '\'' || str[*i] == '\"'))
+			quote = str[*i];
+		else if (quote && str[*i] == quote)
+			quote = '\0';
+		if (mini_is_intab(charset, &str[*i], 1) && !quote)
 			break ;
-		cpt++;
-		if (mini_is_intab(charset, &str[i], 1))
-		{
-			i++;
-			if ((str[i] == '<' && str[i - 1] == '<')
-				|| (str[i] == '>' && str[i - 1] == '>'))
-				i++;
-		}
-		i = nb_of_words2(str, charset, i, quote);
+		if (str[*i] == ' ' && !quote)
+			break ;
+		res[j++] = str[(*i)++];
 	}
-	return (cpt);
+	return (j);
+}
+
+char	*ministrdup2(char *str, char **charset, int	*i)
+{
+	char	*res;
+	int		size;
+	int		j;
+
+	j = 0;
+	size = mini_len(str, charset, *i);
+	res = (char *)malloc(sizeof(char) * (size + 1));
+	if (!res)
+		return (NULL);
+	while (str[*i] && str[*i] == ' ')
+		(*i)++;
+	j = fill(str, charset, res, i);
+	if (mini_is_intab(charset, &str[*i], 1) && j < 2)
+	{
+		if (mini_is_intab(charset, &str[*i], 1) == 2)
+			res[j++] = str[(*i)++];
+		res[j++] = str[(*i)++];
+	}
+	res[j] = '\0';
+	return (res);
 }
 
 int	stris_encapsuled(char *str)
@@ -74,31 +76,29 @@ int	stris_encapsuled(char *str)
 	return (quote == '\0');
 }
 
-static t_token	*assignation(char *str, char **charset)
+static t_token	*assignation(char *str, char **charset,
+	t_token *tokens, int i)
 {
-	int		ij[2];
-	t_token	*tokens;
 	char	*content;
-	int		size;
 	int		plop;
 
-	size = nb_of_words(str, charset);
-	ij[0] = 0;
-	ij[1] = 0;
-	tokens = NULL;
-	while (ij[0] < size)
+	while (str[i])
 	{
-		if (!mini_strcmp(" '|'", &str[ij[1]], 1)
-			|| !mini_strcmp(" \"|\"", &str[ij[1]], 1))
+		while (str[i] == ' ')
+			i++;
+		if (!str[i])
+			break ;
+		if (!mini_strcmp(" '|'", &str[i], 1)
+			|| !mini_strcmp(" \"|\"", &str[i], 1))
 			plop = PARAM;
 		else
 			plop = OTHER;
-		content = ministrdup(str, charset, &ij[1]);
-		if (!content)
-			return (quit(tokens));
+		content = ministrdup2(str, charset, &i);
 		if (!mini_tokenadd_back(&tokens, mini_tokennew(content, plop)))
-			return (quit(tokens));
-		ij[0]++;
+		{
+			mini_tokenclear(tokens);
+			return (NULL);
+		}
 	}
 	return (tokens);
 }
@@ -112,5 +112,5 @@ t_token	*mini_split(char *str, char **charset, int *error)
 		*error = QUOTE_ERROR;
 		return (NULL);
 	}
-	return (assignation(str, charset));
+	return (assignation(str, charset, NULL, 0));
 }

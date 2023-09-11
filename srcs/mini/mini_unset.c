@@ -6,7 +6,7 @@
 /*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 17:41:59 by romartin          #+#    #+#             */
-/*   Updated: 2023/08/31 14:32:44 by dgoubin          ###   ########.fr       */
+/*   Updated: 2023/09/10 15:15:27 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	mini_unset(t_minijoker *mini)
 	int		i;
 
 	i = 0;
-	mini->error = SUCCESS;
+	mini->error = 0;
 	mini->tokens = mini->tokens->next;
 	if (!mini->tokens)
 		return ;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgoubin <dgoubin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 17:35:56 by romartin          #+#    #+#             */
-/*   Updated: 2023/09/04 21:06:32 by romartin         ###   ########.fr       */
+/*   Updated: 2023/09/10 15:15:12 by dgoubin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,10 @@ int	check_env(t_minijoker *mini, t_token *tokens)
 	return (0);
 }
 
-int	mini_env(t_minijoker *mini, int i)
+int	mini_env(t_minijoker *mini, int i, t_env *env)
 {
-	t_env	*env;
 	t_env	*first;
 
-	env = NULL;
 	mini->tokens = mini->tokens->next;
 	if (check_env(mini, mini->tokens) == 1)
 		return (EXIT_FAILURE);
@@ -90,5 +88,5 @@ int	mini_env(t_minijoker *mini, int i)
 		env = env->next;
 	}
 	mini_ft_lst_clear(first);
-	return (SUCCESS);
+	return (0);
 }
